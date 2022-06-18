@@ -123,16 +123,17 @@ print('''
 
 eng.say('hello this is Nikki assistant. i am ready to help you')
 eng.runAndWait()
-r = sr.Recognizer()                                                                               
-with sr.Microphone() as source:                                                                       
-    print("Listening… :")  
-    eng.say('Listening…')
-    eng.runAndWait()                                                                                 
-    audio = r.listen(source)   
-user_audio_text = r.recognize_google(audio)
-print(user_audio_text)
+
 while True:
   try:
+    r = sr.Recognizer()                                                                               
+    with sr.Microphone() as source:                                                                       
+        print("Listening… :")  
+        eng.say('Listening…')
+        eng.runAndWait()                                                                                 
+        audio = r.listen(source)   
+    user_audio_text = r.recognize_google(audio)
+    print(user_audio_text)
     print("You said :" + user_audio_text)
 
     if 'Nikki' in user_audio_text and 'back' in user_audio_text or 'Nikki' in user_audio_text and 'exit' in user_audio_text:
