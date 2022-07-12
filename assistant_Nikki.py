@@ -9,11 +9,15 @@ this is my personal assistant name is Nikki
     4) if you want to search any to more you need to say 'Nikki search' and what you want to search Ex : Nikki search 2+2 how much
     and it will open your browser and it will search for you , 
     5) if you say Nikki open instagram  it will open the browser and it will open instagram for you 
-    ^ this is my total python learning skills  
+    ^ this is my total python learning skills 
+    6 ) if you ask play songs it will play songs for you 
     '''
 
 # i used some modules in this projects like selenium,pyttsx3,speech recognition, Beautifulsoup,and some others
 
+from http.server import executable
+from lib2to3.pgen2 import driver
+from os import system
 import time
 from distutils.log import error
 from gettext import find
@@ -30,12 +34,27 @@ import pyttsx3
 
 joke_nik = [['I invented a new word!Plagiarism!],[Did you hear about the mathematician who’s afraid of negative numbers?He’ll stop at nothing to avoid them.'],['Why do we tell actors to “break a leg?”Because every play has a cast. Here are some dark jokes to check out if you have a morbid sense of humor.'],['Helvetica and Times New Roman walk into a bar.“Get out of here!” shouts the bartender. “We don’t serve your type.”],[Yesterday I saw a guy spill all his Scrabble letters on the road. I asked him, “What’s the word on the street?”Once my dog ate all the Scrabble tiles. For days he kept leaving little messages around the house. Don’t miss these hilarious egg puns that will absolutely crack you up.'],['Knock! Knock! Who’s there? Control Freak. Con… OK, now you say, “Control Freak who?”' ],['Hear about the new restaurant called Karma? There’s no menu: You get what you deserve.'],['A woman in labor suddenly shouted, “Shouldn’t! Wouldn’t! Couldn’t! Didn’t! Can’t!”“Don’t worry,” said the doc. “Those are just contractions.”'],['A bear walks into a bar and says, “Give me a whiskey and … cola.” “Why the big pause?” asks the bartender. The bear shrugged. “I’m not sure; I was born with them.”'],['Did you hear about the actor who fell through the floorboards?He was just going through a stage.'],['Did you hear about the claustrophobic astronaut? He just needed a little space.'],['Why don’t scientists trust atoms? Because they make up everything.'],['Why did the chicken go to the séance?To get to the other side. Check out these other “why did the chicken cross the road?” jokes for more laughs.'],['Where are average things manufactured?The satisfactory.'],['How do you drown a hipster? Throw him in the mainstream.'],['What sits at the bottom of the sea and twitches?A nervous wreck.'],['What does a nosy pepper do? Gets jalapeño business!'],['How does Moses make tea? He brews.'],['Why can’t you explain puns to kleptomaniacs?They always take things literally.'],['How do you keep a bagel from getting away?Put lox on it.'],['A man tells his doctor, “Doc, help me. I’m addicted to Twitter!”The doctor replies, “Sorry, I don’t follow you …”']]
 
+driver = webdriver.Chrome(executable_path="/home/navgurukul/Downloads/chromedriver-sel/chromedriver") 
+
 eng = pyttsx3.init()
 voices = eng.getProperty('voices')
 eng.setProperty('voice', 'english_rp+f2') 
 eng.runAndWait()
-eng.setProperty('volume', 4.0)
+eng.setProperty('volume', 3.0)
 
+def NIkkiblog():
+  print('Blog time')
+  driver.get('https://exploring-blog-app.herokuapp.com')
+  not_now2 = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[id='forEmail']")))
+  not_now3 = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[id='forPassword']")))
+  not_now2.send_keys('mynikki007@gmail.com')
+  not_now3.send_keys('nikki@123')
+  log_in = WebDriverWait(driver,10).until(EC.element_to_be_clickable((By.CSS_SELECTOR,"button[type = 'submit']"))).click()  
+  time.sleep(2)
+  post = WebDriverWait(driver,10).until(EC.element_to_be_clickable((By.CSS_SELECTOR,"button[type = 'button']"))).click()  
+  tit =  WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[id='forText']"))).send_keys("Hello i'm NIkki by prem")
+  tit2 =  WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[id='forTextarea']"))).send_keys("this is my first meet with the dlog bro nice to meet you bro")
+  
 
 def NikkiVoiceSource():
     r = sr.Recognizer()                                                       
@@ -46,24 +65,31 @@ def NikkiVoiceSource():
         audio = r.listen(source)  
     return r.recognize_google(audio)
 
-def NikkiPlaySong():
-  driver = webdriver.Firefox(executable_path="/home/navgurukul/Downloads/geckodriver-v0.31.0-linux64/geckodriver")
-  driver.get('https://accounts.spotify.com/en/login?continue=https%3A%2F%2Fopen.spotify.com%2F')
-  input_user = WebDriverWait(driver,10).until(EC.element_to_be_clickable((By.XPATH,"//input[@placeholder='Email address or username']")))
-  input_user.send_keys('giribabu22@navgurukul.org') 
-  input_pin = WebDriverWait(driver,10).until(EC.element_to_be_clickable((By.XPATH,"//input[@placeholder='Password']")))
-  input_pin.send_keys('prem@123')
-  sub = WebDriverWait(driver,10).until(EC.element_to_be_clickable((By.CSS_SELECTOR,"button[id='login-button']"))).click()     
 
-def NikkiYoutube(song):
-  print(song)
-  song = song.replace(' ','+')
-  driver = webdriver.Firefox(executable_path="/home/navgurukul/Downloads/geckodriver-v0.31.0-linux64/geckodriver")
-  driver.get(f'https://www.youtube.com/results?search_query={song}')
+def NikkiPlaySong(song):
+  driver.switch_to.new_window()
+  driver.get(f'https://music.youtube.com/search?q={song}')
+  WebDriverWait(driver,10).until(EC.element_to_be_clickable((By.CSS_SELECTOR,"yt-icon[class ='icon style-scope ytmusic-play-button-renderer']"))).click() 
+  
+def NikkiYoutube(src_youtube):
+  driver.switch_to.new_window()
+  driver.get(f'https://www.youtube.com/')
   src2 = WebDriverWait(driver,10).until(EC.element_to_be_clickable((By.XPATH,"//input[@placeholder='Search']")))
-  src2.send_keys(song) 
+  src2.send_keys(src_youtube) 
   time.sleep(2)
   src2.send_keys(Keys.ENTER)
+  WebDriverWait(driver,10).until(EC.element_to_be_clickable((By.CSS_SELECTOR,"div[class ='style-scope ytd-video-renderer']"))).click() 
+
+
+def NikkiClass(withlogin_ac):
+  if withlogin_ac == 'with':
+    NikkiSetGoogle()
+    time.sleep(5)
+    driver.switch_to.new_window()
+    driver.get(f'https://devsnest.in/login')
+    WebDriverWait(driver,10).until(EC.element_to_be_clickable((By.XPATH,"//span[contains(text(),'Continue with Google')]"))).click()
+  driver.switch_to.new_window()
+  driver.get(f'https://www.youtube.com/c/Devsnest/videos')
 
 def NikkiBoring():
     while True:
@@ -100,6 +126,13 @@ def NikkiBoring():
             eng.say('Could not understand audio')
             eng.runAndWait()
             pass
+def NikkiSetGoogle():
+    driver.get('https://accounts.google.com/signin')
+    driver.find_element(By.CSS_SELECTOR, "input#identifierId").send_keys('giribabu22@navgurukul.org')
+    driver.find_element_by_xpath("//span[text()='Next']").click()
+    time.sleep(3)
+    driver.find_element(By.NAME, "password").send_keys('prem@630')
+    driver.find_element_by_xpath("//span[text()='Next']").click()
 
 def timeFun():
   t = NikkiTime('india')
@@ -131,10 +164,10 @@ def NikkiWork():
     eng.say(res)
     eng.runAndWait()
 
-def NikkiInsta(username,password):                                     # this function do , auto login instagram            
-  driver = webdriver.Firefox(executable_path="/home/navgurukul/Downloads/geckodriver-v0.31.0-linux64/geckodriver")
+def NikkiInsta(username,password):                                     # this function do , auto login instagram 
+  driver.switch_to.new_window()           
   driver.get('https://www.instagram.com/accounts/login/')
-  user_name = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='username']")))
+  user_name = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='username']"))) 
   user_name.clear()
   user_name.send_keys(username)
   pas = WebDriverWait(driver,10).until(EC.element_to_be_clickable((By.CSS_SELECTOR,"input[name = 'password']")))
@@ -183,7 +216,7 @@ def NikkiNewstoday():
   eng.runAndWait()
 
 def NikkiSearch():                                         # this function search anything in the browser
-  driver = webdriver.Firefox(executable_path="/home/navgurukul/Downloads/geckodriver-v0.31.0-linux64/geckodriver")
+  driver.switch_to.new_window()
   driver.get('https://www.google.com/')
   src = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='q']")))
   src.clear()
@@ -217,13 +250,19 @@ while True:
     user_audio_text = NikkiVoiceSource()
     print("You said :" + user_audio_text)
 
-    if 'Nikki' in user_audio_text:
-        
-        if 'back' in user_audio_text or 'exit' in user_audio_text:
-            print('<<<<<<<<< Bye boss >>>>>>>>>>')
-            eng.say(' Bye boss ')
+    if 'Nikki' in user_audio_text or 'Nicki' in user_audio_text  or 'ok' in user_audio_text:
+
+        if 'open class' in user_audio_text or 'class' in user_audio_text:
+            res = 'open'
+            eng.say('wait Boss i am opening Devsnest')
             eng.runAndWait()
-            break
+            if 'with' in user_audio_text:
+                res = 'with'
+            NikkiClass(res)
+
+        elif 'blog' in user_audio_text or 'blog app' in user_audio_text:
+            NIkkiblog()
+
         elif 'hi' in user_audio_text or 'hello' in user_audio_text:
             timeFun()
             NikkiWork()
@@ -265,19 +304,25 @@ while True:
             eng.say("i'm doing great what about you")
             eng.runAndWait()
 
-        elif 'play song' in user_audio_text or 'song in spotify'  in user_audio_text:
-            eng.say('ok boss ! wait i am opening spotify ')
+        elif 'play song' in user_audio_text or 'play songs in YouTube music'  in user_audio_text or 'play music' in user_audio_text :
+            eng.say('ok boss ! wait i am opening youtube music ')
             eng.runAndWait()
-            NikkiPlaySong()
+            if 'play songs in YouTube music' in user_audio_text:
+                f = user_audio_text.find('music')+5
+                song = user_audio_text[f:]
+            else:
+                l = user_audio_text.split()
+                song = ' '.join(l[2:])
+            NikkiPlaySong(song)
 
-        elif 'open YouTube' in user_audio_text or 'YouTube' in  user_audio_text and 'play' in user_audio_text and 'Nikki' in user_audio_text:
-            eng.say('ok boss ! wait i am opening browser')
+        elif 'open YouTube' in user_audio_text or 'YouTube' in  user_audio_text:
+            eng.say('ok boss ! wait i am opening YouTube')
             eng.runAndWait()
             value_ = user_audio_text.find('YouTube')
-            song = user_audio_text[value_+8:]
-            eng.say(f'ok boss finding{song}')
+            search_ = user_audio_text[value_+8:]
+            eng.say(f'ok boss finding{search_}')
             eng.runAndWait()
-            NikkiYoutube(song)
+            NikkiYoutube(search_)
 
         elif 'time in' in user_audio_text  :
             mn = user_audio_text.find('in')
@@ -285,8 +330,6 @@ while True:
             NikkiTime(timeL)
 
         elif 'search' in user_audio_text or 'find' in user_audio_text or 'research' in user_audio_text:
-            eng.say(' Bye boss ')
-            eng.runAndWait()
             eng.say('ok boss')
             eng.runAndWait()
             NikkiSearch()
@@ -310,11 +353,14 @@ while True:
             eng.say('hoo thank you i love you too')
             eng.runAndWait()
 
-        elif 'wh' in user_audio_text:
-            print('i am still learning--')
-            eng.say('i am still learning --')
+        elif 'bhai' in user_audio_text or 'exit' in user_audio_text :
+            print('<<<<<<<<< Bye boss >>>>>>>>>>')
+            eng.say(' Bye boss ')
             eng.runAndWait()
-        else:pass
+            break 
+        else:
+            eng.say('i am still learning ')
+            eng.runAndWait()
 
     elif user_audio_text == 'what is your name' or user_audio_text in 'your name':
         print('\n >> hello my name is NIKKI/prem')
@@ -325,6 +371,11 @@ while True:
         print("you can ask first you need to say 'NIKKI' After :play song, news today, any joke, who is, time in ,open YouTube,open insta,weather, ")
         eng.say("you can ask first you need to say 'NIKKI' After 'Nikki play song' , news today, any joke, who is, time in ,open YouTube,open insta,weather ")
         eng.runAndWait()
+
+    elif 'set account' in user_audio_text:
+        eng.say('login your google account')
+        eng.runAndWait()
+        NikkiSetGoogle()
         
     else:
         print('tell Nikki name and ask anything')
@@ -345,26 +396,28 @@ while True:
               audio = r.listen(source)   
             user_audio_text = r.recognize_google(audio)
             print("You said :" + user_audio_text)
-            if 'hello Nikki' in user_audio_text or 'are you there' in user_audio_text or 'hi Nikki ' in user_audio_text:
+            if 'hello Nikki' in user_audio_text or 'are you there' in user_audio_text or 'hi Nikki' in user_audio_text or 'are there' in user_audio_text:
               eng.say('Hello boss i here to help you ____')
               eng.runAndWait()
               error =1
               break
             else:
               print('\n tell Nikki')
-              eng.say('ho hooo hoo')
-              eng.runAndWait()
+              error=0
               s+=1
         except sr.UnknownValueError:
           s+=1 
-          if s == 25:
+          if s == 300:
             eng.say('Hello boss i here to help you')
             eng.runAndWait()
             r = random.randrange(0,len(joke_nik)-1)
-            if r %2==0:
-              eng.say(joke_nik[r])
-              eng.runAndWait()
-            s=0
+            eng.say(joke_nik[r])
+            eng.runAndWait()
+        except :
+            print('hoho ')
+            eng.say('hoohohoo')
+            eng.runAndWait()
+            pass
     else:
       error+=1
 
