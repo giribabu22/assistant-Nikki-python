@@ -32,13 +32,11 @@ joke_nik = [['I invented a new word!Plagiarism!],[Did you hear about the mathema
 driver = webdriver.Chrome(executable_path="/home/navgurukul/Downloads/chromedriver-sel/chromedriver")
 flag = 'unmute'
 
-
 eng = pyttsx3.init()
 voices = eng.getProperty('voices')
 eng.setProperty('voice', 'english_rp+f2') 
 eng.runAndWait()
 eng.setProperty('volume', 4.0)
-
 
 def NikkiSay(data):
     eng.say(data)
