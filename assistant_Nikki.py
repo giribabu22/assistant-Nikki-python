@@ -43,7 +43,7 @@ def NikkiSay(data):
     eng.runAndWait()
 
 NikkiSay('wait boss setting the broser')
-driver.get('file:///home/navgurukul/Desktop/premlearn/nikki/front_nikki.html')
+#driver.get('file:///home/navgurukul/Desktop/premlearn/nikki/front_nikki.html')
 
 def NIkkiblog():
   driver.get('https://exploring-blog-app.herokuapp.com')
