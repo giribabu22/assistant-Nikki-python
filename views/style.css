@@ -1,0 +1,63 @@
+*{
+  width: auto;
+  margin: 0;
+  padding: 0;
+}
+.background{
+  width: auto;
+  background-color: rgb(0, 0, 0);
+  height: 100vh;
+}
+.background img {
+  height: 98vh;
+  width: 100%;
+}
+.tex{
+  color: aliceblue;
+  font-size: 30px;
+  width: auto;
+  height: 10vh;
+}
+.menu a{
+  text-decoration: none;
+  background-color: rgb(186, 123, 123);
+  height: 3vh;
+  width: 100px;
+}
+.menu{
+  margin-top: -35vh;
+  text-align: center;
+}
+.title{
+  text-align: center;
+  font-size: 30px;
+  color: white;
+}
+.mic{
+  height: 15vh;
+  text-align: center;
+  color: white;
+}
+.btnHelp{
+  z-index: 1;
+  font-family: monospace;
+  font-size: 22px;
+  color: rgb(18, 16, 16);
+  width: 140px;
+  height: 38px;
+  color: aliceblue;
+  border-color: aqua;
+  background-color: rgb(99, 162, 218);
+  border-radius: 30px;
+}
+.helpClass{
+  z-index: 2;
+  text-align: left;
+  position: absolute;
+  margin-top: -50vh;  
+  margin-left: 5vh;
+  color: rgb(99, 162, 218);
+  font-size: 20px;
+  width: auto;
+  height: 10vh;
+}
