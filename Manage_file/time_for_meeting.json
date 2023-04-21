@@ -1,0 +1,14 @@
+{
+    "11:30\u202fAM to 11:55\u202fAM. Daily Catch-up/Telegram game bots. ": {
+        "starting_time": "11:30:00",
+        "ending_time": "11:55:00",
+        "meeting_link": "nuh-eusr-hnu",
+        "status": false
+    },
+    "8:00\u202fPM to 9:00\u202fPM. Data Structures and Algorithms session. ": {
+        "starting_time": "20:00:00",
+        "ending_time": "21:00:00",
+        "meeting_link": "fdr-geqx-ynr",
+        "status": false
+    }
+}

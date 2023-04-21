@@ -4,10 +4,7 @@ from sub_task.NikkiSay import NikkiSay
 try:
     from dotenv import load_dotenv
     import speech_recognition as sr
-    import time
-    import random
-    import json
-    import requests
+    import time,random,json,requests
     from bs4 import BeautifulSoup as useMe
     from selenium.webdriver.support.wait import WebDriverWait
     from selenium.webdriver.common.keys import Keys
@@ -18,7 +15,7 @@ try:
     from pyautogui import press, hotkey
     import psutil
     from datetime import datetime
-    # from dotenv import
+    import re
 except ImportError:
     os.system('sudo apt-get install python3-tk python3-dev')
     os.system('pip install bs4')
@@ -102,72 +99,45 @@ class Nikki_functions_class():
             (By.CSS_SELECTOR, "input[id='forText']"))).send_keys("Hello i'm NIkki by prem")
         WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[id='forTextarea']"))).send_keys(
             "this is my first meet with the dlog bro nice to meet you bro")
-
-    def NikkiPlaySong(self, user_audio_text):
-        if 'play songs in YouTube music' in user_audio_text:
-            f = user_audio_text.find('music')+5
-            song = user_audio_text[f:]
-        elif 'needle' in user_audio_text:
-            f = user_audio_text.find('needle')+6
-            song = user_audio_text[f:]
-        elif 'music' in user_audio_text:
-            song = user_audio_text[user_audio_text.find('music')+6::]
-        elif 'play' in user_audio_text:
-            song = user_audio_text[user_audio_text.find('play')+5::]
+        
+    def NikkiPlaySong(self,user_audio_text):
+        driver = self.driver
+        pattern = r'(play songs in YouTube music|needle|music|play)\s+(.*)'
+        match = re.search(pattern, user_audio_text, re.IGNORECASE)
+        if match:
+            song = match.group(2)
         else:
             l = user_audio_text.split()
             song = ' '.join(l[3:])
-        self.NikkiSay(
-            f'ok Boss. wait i am opening youtube music.and playing {song}')
+        self.NikkiSay(f'ok Boss. wait i am opening youtube music and playing {song}')
         song = song.replace(' ', '+')
-
-        li = self.driver.window_handles
-
-        def closingTab():
-            li = self.driver.window_handles
-            i = 0
-            while i < len(li):
-                name = self.driver.window_handles[i]
-                self.driver.switch_to.window(name)
-                if 'YouTube Music' in self.driver.title:
-
-                    hotkey('ctrlleft', 'w')
+        l = driver.window_handles
+        for handle in l:
+            driver.switch_to.window(handle)
+            self.NikkiSay('YouTube Music in driver.title: ','YouTube Music' in driver.title)
+            if 'YouTube Music' in driver.title:
+                try:
+                    hotkey('ctrl', 'w')
+                    time.sleep(1)
                     press('enter')
-                    li = self.driver.window_handles
-                    name = self.driver.window_handles[len(li)-1]
-                    self.driver.switch_to.window(name)
+                except Exception as e:
+                    print(e)
+                    # self.NikkiSay(e)
+                time.sleep(1)
+                break
 
-                else:
-                    i += 1
-
-        def playSong(song, bool=True):
-            self.driver.get(f'https://music.youtube.com/search?q={song}')
-            if (bool):
-                WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(
-                    (By.CSS_SELECTOR, "yt-icon[class ='icon style-scope ytmusic-play-button-renderer']"))).click()
-            else:
-                WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(
-                    (By.CSS_SELECTOR, "a[class ='yt-simple-endpoint style-scope yt-formatted-string']"))).click()
-
-            WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(
-                (By.CSS_SELECTOR, "tp-yt-paper-icon-button[class='player-minimize-button style-scope ytmusic-player']"))).click()
-            self.NikkiMute('sleep')
-            self.out_put = 6
-
+        driver.switch_to.window(driver.window_handles[0])
+        driver.switch_to.new_window()
+        driver.get(f"https://music.youtube.com/search?q={song}")
+        # Play the song
         try:
-            closingTab()
-            self.driver.switch_to.new_window()
-            playSong(song)
-            self.driver.window_handles[len(li)-1]
+            WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, "yt-icon[class ='icon style-scope ytmusic-play-button-renderer']"))).click()
+            WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, "tp-yt-paper-icon-button[class='player-minimize-button style-scope ytmusic-player']"))).click()
+            out_put = 6
         except Exception as e:
-            print('ee @@@@', e)
-            try:
-                closingTab()
-                self.driver.switch_to.new_window()
-                playSong(song, False)
-            except Exception as e:
-                print(e)
-                self.NikkiSay('Boss, something wrong in play song function.')
+            self.NikkiSay('Boss, something wrong in play song function.')
 
     def NikkiYoutube(self, src_youtube):
         # try:
