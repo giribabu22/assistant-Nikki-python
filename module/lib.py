@@ -17,7 +17,10 @@ try:
     from datetime import datetime
     import re
 except ImportError:
-    os.system('sudo apt-get install python3-tk python3-dev')
+    # os.system('sudo apt install python3.11-venv')
+    # os.system('python3 -m venv env')
+    # os.system('source env/bin/activate')
+    # os.system('sudo apt-get install python3-tk python3-dev')
     os.system('pip install bs4')
     os.system('pip install selenium')
     os.system('pip install ib2to3')
@@ -26,8 +29,8 @@ except ImportError:
     os.system('pip install psutil')
     os.system('pip install pyautogui')
     os.system('pip install python-dotenv')
-    os.system('sudo apt-get install jackd')
-    os.system('jackd -d alsa')
+    # os.system('sudo apt-get install jackd')
+    # os.system('jackd -d alsa')
 
 error = 1
 load_dotenv()
@@ -52,11 +55,12 @@ class Nikki_functions_class():
         self.netError = 0
         self.out_put = 0
         self.sensorsBatery = 0
+        self.plugged = True
         self.r = sr.Recognizer()
         self.great_mes = ['Wow i have you', "Keep smiling, because life is a beautiful thing and there's so much to smile about.",
                           "Life is a long lesson in humility.", "In three words I can sum up everything I've learned about life. I love myself.",
                           "Love the life you live.", "Life is either a daring adventure or nothing at all"]
-        # return 'uttran_'
+        self.meeting_data = {}
 
     def display_frontend(self):
         self.driver.get(f'file://{self.main_path}views/front_nikki.html')
@@ -64,7 +68,7 @@ class Nikki_functions_class():
     def NikkiVoiceSource(self):
         try:
             with sr.Microphone() as source:
-                audio = self.r.listen(source,phrase_time_limit=3)
+                audio = self.r.listen(source,phrase_time_limit=4)
             words = self.r.recognize_google(audio)
             return words
 
@@ -77,7 +81,7 @@ class Nikki_functions_class():
         if self.out_put < 4:
             playsound(f'{self.main_path}Manage_file/nice notification.mp3')
             with sr.Microphone() as source:
-                audio = self.r.listen(source,phrase_time_limit=6)
+                audio = self.r.listen(source,phrase_time_limit=5)
                 self.out_put += 1
                 return self.r.recognize_google(audio)
 
@@ -109,24 +113,24 @@ class Nikki_functions_class():
         else:
             l = user_audio_text.split()
             song = ' '.join(l[3:])
-        self.NikkiSay(f'ok Boss. wait i am opening youtube music and playing {song}')
+            
+        self.NikkiSay(f"ok Boss. wait i am opening youtube music and playing {song.replace('+',' ')}")
         song = song.replace(' ', '+')
         l = driver.window_handles
         for handle in l:
             driver.switch_to.window(handle)
-            self.NikkiSay('YouTube Music in driver.title: ','YouTube Music' in driver.title)
             if 'YouTube Music' in driver.title:
                 try:
                     hotkey('ctrl', 'w')
                     time.sleep(1)
                     press('enter')
+                    time.sleep(1)
+                    driver.switch_to.window(l[0])
+
                 except Exception as e:
-                    print(e)
-                    # self.NikkiSay(e)
+                    self.NikkiSay('some error in the closing tab')
                 time.sleep(1)
                 break
-
-        driver.switch_to.window(driver.window_handles[0])
         driver.switch_to.new_window()
         driver.get(f"https://music.youtube.com/search?q={song}")
         # Play the song
@@ -140,19 +144,19 @@ class Nikki_functions_class():
             self.NikkiSay('Boss, something wrong in play song function.')
 
     def NikkiYoutube(self, src_youtube):
-        # try:
-        self.NikkiSay('ok boss ! wait i am opening youtube')
-        res = src_youtube.replace(' ', '+')
-        self.driver.switch_to.new_window()
-        if len(src_youtube) > 0:
-            self.driver.get(
-                f'https://www.youtube.com/results?search_query={res}')
-            WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(
-                (By.CSS_SELECTOR, "yt-formatted-string[class ='style-scope ytd-video-renderer']"))).click()
-        else:
-            self.driver.get(f'https://www.youtube.com/')
-        # except:
-        #     self.NikkiSay('Boss, error in Nikki Youtube function.')
+        try:
+            self.NikkiSay('ok boss ! wait i am opening youtube')
+            res = src_youtube.replace(' ', '+')
+            self.driver.switch_to.new_window()
+            if len(src_youtube) > 0:
+                self.driver.get(
+                    f'https://www.youtube.com/results?search_query={res}')
+                WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(
+                    (By.CSS_SELECTOR, "yt-formatted-string[class ='style-scope ytd-video-renderer']"))).click()
+            else:
+                self.driver.get(f'https://www.youtube.com/')
+        except:
+            self.NikkiSay('Boss, error in Nikki Youtube function.')
 
     def NikkiBoring(self, r=True):
         list_play = ['telugu songs', 'ellie goulding', 'chaganti koteswara rao speeches mahabharatham etv',
@@ -167,7 +171,7 @@ class Nikki_functions_class():
                 ply = self.NikkiVoiceSource()
                 if c > 3:
                     r = False
-                if 'YouTube' in ply:
+                elif 'YouTube' in ply:
                     cho = random.choice(list_play)
                     self.NikkiYoutube(cho)
                     r = False
@@ -223,20 +227,20 @@ class Nikki_functions_class():
                 pass
 
     def NikkiGreatings(self):
-        # try:
-        t = datetime.now().hour
-        res = 'good '
+        try:
+            t = datetime.now().hour
+            res = 'good '
 
-        if t >= 1 and t <= 11:
-            res = 'good morning'
-        elif t >= 12 and t <= 15:
-            res = 'good afternoon'
-        elif t >= 16 and t <= 22:
-            res = 'good evening'
+            if t >= 1 and t <= 11:
+                res = 'good morning'
+            elif t >= 12 and t <= 15:
+                res = 'good afternoon'
+            elif t >= 16 and t <= 22:
+                res = 'good evening'
 
-        self.NikkiSay(f'{res}')
-        # except:
-        #     self.NikkiSay('Boss, error in Greatings')
+            self.NikkiSay(f'{res}')
+        except:
+            self.NikkiSay('Boss, error in Greatings')
 
     # this function help, to find the who is questions
 
@@ -268,10 +272,6 @@ class Nikki_functions_class():
             for i in res:
                 self.NikkiSay(
                     f"{i} meeting you have at {res[i]['starting_time']}")
-        # if do == 'w':
-        #     self.NikkiSay(data)
-        #     f = open('/home/navgurukul/Desktop/workOftheday.txt','a')
-        #     f.write(data)
 
     def NikkiTranslation(self, word):
         self.NikkiSay('ok boss opening  translate')
@@ -331,12 +331,6 @@ class Nikki_functions_class():
             url = f'https://www.google.com/search?q={keywords}'
 
             self.driver.get(url)
-            # page = requests.get(url).content
-            # soup = useMe(page,'lxml')
-            # r    = open('x.html','w')
-            # r.write(soup.prettify())
-            # data = soup.find('div',class_="LGOjhe")
-            # self.NikkiSay(data)
         except:
             self.NikkiSay('error in Nikki google search')
 
@@ -353,7 +347,6 @@ class Nikki_functions_class():
         self.NikkiAutoJoinMeeting()
         user_audio_text = self.NikkiVoiceSource()
         if 'hello Nikki' in user_audio_text or 'are you there' in user_audio_text or 'hai Nikki' in user_audio_text or 'are there' in user_audio_text:
-            # self.eng.setProperty('volume', self.voice_save_file[0]['volume'])
             self.NikkiSay('Hello boss i here for you.')
             self.out_put = 0
             error = 1
@@ -361,10 +354,9 @@ class Nikki_functions_class():
         if 'Nikki' in user_audio_text:
             self.NikkiWritingHistory(user_audio_text)
             if 'stop music' in user_audio_text or 'playback' in user_audio_text or 'drop my needle' in user_audio_text or 'put the needle' in user_audio_text:
-                # self.eng.setProperty(
-                # 'volume', self.voice_save_file[0]['volume'])
                 self.NikkiPlayback()
-                # self.eng.setProperty('volume', 0)
+            elif ('meet' in user_audio_text or 'create' in user_audio_text) and 'link' in user_audio_text:
+                self.NikkiCreatingMeetingLink()
             elif 'search' in user_audio_text or 'Google' in user_audio_text or 'keyword' in user_audio_text:
                 self.NikkiSearch(user_audio_text)
             elif ('play' in user_audio_text and 'YouTube music' in user_audio_text) or ('play ' in user_audio_text and ('music' in user_audio_text) or 'song' in user_audio_text):
@@ -373,15 +365,10 @@ class Nikki_functions_class():
         elif 'mute' in user_audio_text or 'Unmute' in user_audio_text:
             self.NikkiMute(user_audio_text)
             if 'Unmute' in user_audio_text:
-                # self.eng.setProperty('volume', self.voice_save_file[0].volume)
                 self.NikkiSay('i am in sleep mood')
-                # self.NikkiMute
-                # self.eng.setProperty('volume', 0)
+   
                 error = 0
                 TrueFalse = True
-        # else:
-        #     error=0
-        #     TrueFalse = True
         return error, TrueFalse
 
     def NikkiPlayback(self):
@@ -398,7 +385,6 @@ class Nikki_functions_class():
 
     def NikkiCloseTab(self, tabName, user_audio_text):
         self.NikkiSay('ok Boss ')
-        # c = self.driver.window_handles[0]
         li = self.driver.window_handles
         tabName = ''
         if 'stop music' in user_audio_text or 'back' in user_audio_text:
@@ -421,7 +407,6 @@ class Nikki_functions_class():
                     time.sleep(1)
                     hotkey('ctrlleft', 'w')
                     press('enter')
-                    # WebDriverWait(self.driver,10).until(EC.element_to_be_clickable((By.CSS_SELECTOR,"yt-icon[class ='icon style-scope ytmusic-play-button-renderer']"))).click()
                 except:
                     pass
 
@@ -436,47 +421,50 @@ class Nikki_functions_class():
             (By.CSS_SELECTOR, "div[class='VvrH3b']"))).click()
 
     def NikkiFrontEnd(self):
-        # try:
-        self.NikkiSay('wait boss setting the broser it will take few seconds')
-        chrome_options = webdriver.ChromeOptions()
-        chrome_options.binary_location = '/snap/bin/brave'
-        chrome_options.add_argument('--remote-debugging-port=9000')
-        self.driver = webdriver.Chrome(
-            self.main_path+'chromedriver-sel/chromedriver', chrome_options=chrome_options)
-        self.driver.get(f'file://{self.main_path}views/front_nikki.html')
-        # except:
-        #     self.NikkiSay('error in Nikki frontEnd')
+        try:
+            self.NikkiSay('wait boss setting the broser it will take few seconds')
+            chrome_options = webdriver.ChromeOptions()
+            chrome_options.binary_location = '/snap/bin/brave'
+            chrome_options.add_argument('--remote-debugging-port=9000')
+            self.driver = webdriver.Chrome(
+                self.main_path+'chromedriver-sel/chromedriver', chrome_options=chrome_options)
+            self.driver.get(f'file://{self.main_path}views/front_nikki.html')
+        except:
+            self.NikkiSay('error in Nikki frontEnd')
 
     def NikkiWritingHistory(self, user_audio_text):
-        # try:
-        dic = {}
-        with open(f'/{self.main_path}historyDataOfNikki/History_nikki.txt', 'r') as f:
-            f2 = f.read()
-        with open(f'/{self.main_path}historyDataOfNikki/History_nikki.txt', 'a') as f:
-            f.write(' '+user_audio_text+' \n')
-        with open(f'/{self.main_path}historyDataOfNikki/History_nikki.txt', 'r') as f:
-            f2 = f.read()
+        if user_audio_text == None:
+            pass
+        else:
+            try:
+                dic = {}
+                with open(f'/{self.main_path}historyDataOfNikki/History_nikki.txt', 'r') as f:
+                    f2 = f.read()
+                with open(f'/{self.main_path}historyDataOfNikki/History_nikki.txt', 'a') as f:
+                    f.write(' '+user_audio_text+' \n')
+                with open(f'/{self.main_path}historyDataOfNikki/History_nikki.txt', 'r') as f:
+                    f2 = f.read()
 
-        li = f2.split(' ')
-        for word in li:
-            if word in dic:
-                dic[word] += 1
-            else:
-                dic[word] = 1
-        del dic['\n']
+                li = f2.split(' ')
+                for word in li:
+                    if word in dic:
+                        dic[word] += 1
+                    else:
+                        dic[word] = 1
+                del dic['\n']
 
-        li = list(dic.values())
-        li.sort(reverse=True)
-        newDict = {}
+                li = list(dic.values())
+                li.sort(reverse=True)
+                newDict = {}
 
-        for ele in li:
-            for k, v in dic.items():
-                if ele == v:
-                    newDict[k] = v
-        with open(f'/{self.main_path}historyDataOfNikki/mostlyUseWords.json', 'w') as f1:
-            f1.write(json.dumps(newDict, indent=3))
-        # except:
-        #     self.NikkiSay('error in Nikki Writing History')
+                for ele in li:
+                    for k, v in dic.items():
+                        if ele == v:
+                            newDict[k] = v
+                with open(f'/{self.main_path}historyDataOfNikki/mostlyUseWords.json', 'w') as f1:
+                    f1.write(json.dumps(newDict, indent=3))
+            except Exception as e:
+                self.NikkiSay('error in Nikki Writing History')
 
     def NikkiMeeting(self, link):
         self.NikkiSay("Boss. Now i am opening the google meet.")
@@ -492,18 +480,18 @@ class Nikki_functions_class():
                     (By.XPATH, "//span[text()='Ask to join']"))).click()
             except:
                 WebDriverWait(self.driver, 5).until(EC.element_to_be_clickable(
-                    (By.XPATH, "//span[text()='Ask to join']"))).click()
+                    (By.XPATH, "//span[text()='Join now']"))).click()
 
     def NikkiSetGoogle(self, word='Nikki'):
         if not (self.checking_google_login()):
             if ('Nikki' in word):
                 user = os.getenv('NikkiGmail')
                 pin = os.getenv('NikkiPassword')
-                say = 'ok boss sighin my google account for you'
+                say = 'ok boss Sign in my google account for you'
             else:
                 user = os.getenv('gmail')
                 pin = os.getenv('password')
-                say = 'ok boss sighin your google account'
+                say = 'ok boss Sign in your google account'
 
             self.driver.implicitly_wait(15)
             self.NikkiSay(say)
@@ -516,20 +504,30 @@ class Nikki_functions_class():
                 self.driver.find_element(By.NAME, 'Passwd').send_keys(pin)
                 WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(
                     (By.XPATH, "//span[text()='Next']"))).click()
-                # if 'giri' in user :self.googleLog = 1
-                time.sleep(1)
+                time.sleep(3)
             except Exception as e:
-                print(e, 'llllllllllllll')
                 self.NikkiSay(
                     'Boss, something  wrong in login Google function.')
+            finally:
+                try:
+                    l = self.driver.window_handles
+                    hotkey('ctrl', 'w')
+                    time.sleep(1)
+                    press('enter')
+                    time.sleep(1)
+                    self.driver.switch_to.window(l[0])
+                    time.sleep(1)
+                except Exception as e:
+                    self.NikkiSay('some error in the closing tab')
         else:
-            self.NikkiSay('Boss, You already sign-in the google!')
+            self.NikkiSay('Boss, You already sign in the google!')
 
     def NikkiAutoJoinMeeting(self):
         self.Nikkicharge()
+        # with open(f'{self.main_path}Manage_file/main_save.json', 'r') as f:
+        #     self.main_file = json.load(f)
         current_time = datetime.now()
-        # print(current_time, self.last_hour, current_time.hour)
-        if self.main_file[1] != current_time.hour and (current_time.hour in [12, 8, 14]):
+        if self.main_file[1] != current_time.hour : #and (current_time.hour in [12, 8, 14,9,10,11,7]):
 
             with open(f'{self.main_path}Manage_file/main_save.json', 'r') as f:
                 self.main_file = json.load(f)
@@ -540,9 +538,6 @@ class Nikki_functions_class():
             with open(f'{self.main_path}Manage_file/main_save.json', 'w') as f:
                 f.write(json.dumps(self.main_file, indent=3))
 
-            # hotkey('ctrlleft', 'w')
-            # time.sleep(0.4)
-            # press('enter')
         if self.new_day != current_time.day:
             for d in self.time_table_data:
                 with open(f'{self.main_path}Manage_file/time_for_meeting.json', 'a') as fil:
@@ -567,9 +562,7 @@ class Nikki_functions_class():
         li12 = f'{current_time - self.last_time }'
         li12 = li12.split(':')
         if int(li12[0]) > 1 or int(li12[1]) > 5:
-            # self.eng.setProperty('volume', self.voice_save_file[0]['volume'])
             self.NikkiSay(' I am activated. Boss ')
-            # self.eng.setProperty('volume', 0)
 
         if self.last_time.minute != current_time.minute:
             with open(f'{self.main_path}Manage_file/time_for_meeting.json', "r") as file1:
@@ -614,19 +607,58 @@ class Nikki_functions_class():
 
     def Nikkicharge(self):
         s = int(psutil.sensors_battery()[0])
-        if s <= 20 and self.sensorsBatery <= 2 or s <= 5 and self.sensorsBatery < 6:
-            # self.eng.setProperty('volume', self.voice_save_file[0]['volume'])
+        battery = psutil.sensors_battery()
+        if self.plugged and battery.power_plugged:
+            charger_ = [
+                "The charger functions by being plugged in.",
+                "Plugging in the charger is all it takes.",
+                "To charge, simply connected into the plug-in charger.",
+                "The charger operates solely through a plug-in connection.",
+                "By plugging it in, the charger can be used for charging."
+            ]
+            charger_sentences = random.choice(charger_)
+            self.NikkiSay(f"Battery percentage {int(battery.percent)}.{charger_sentences}")
+            self.plugged = False
+        elif not self.plugged and not battery.power_plugged:
+            disconnect = [
+                "Simply disconnect the charger from the power source.",
+                "Just remove the charger from its power outlet.",
+                "Unplug the charger to stop the flow of electricity.",
+                "Disconnect the charging cable from the power supply.",
+                "Take out the charger plug from the electrical socket."
+            ]
+            disconnect_sentence = random.choice(disconnect)
+            self.NikkiSay(f"Battery percentage {int(battery.percent)}.{disconnect_sentence}")
+            self.plugged = True
+            
+
+        if not battery.power_plugged and( s <= 20 and self.sensorsBatery <= 2 or s <= 5 and self.sensorsBatery < 6):
+            sentences = [
+                "My battery is running low, could you please find a charger for me?",
+                "I'm in need of a charger as my battery level is critically low.",
+                "Can someone assist me with a charger? My battery is about to die.",
+                "It seems like my battery is draining quickly. Is there a charger available?",
+                "I'm running out of battery power. Could someone kindly lend me a charger?"
+                ]
+            random_sentence = random.choice(sentences)
             self.sensorsBatery += 1
-            self.NikkiSay(f'{s}% Boss, My battery is low, Can charger me ')
-            # self.eng.setProperty('volume', 0)
+            self.NikkiSay(f'{s}% Boss, {random_sentence}')
         elif s >= 22 and s <= 97 and self.sensorsBatery != 0:
             self.sensorsBatery = 0
-        elif s >= 100 and self.sensorsBatery < 4:
-            # self.eng.setProperty('volume', self.voice_save_file[0]['volume'])
-            self.sensorsBatery += 1
+        elif s >= 100 and self.sensorsBatery <= 2 and battery.power_plugged:
+            sentences_full = [
+                "Sure, You can disconnect your charger now that my battery is fully charged.",
+                "Since my battery is at maximum capacity, You can unplug the charger for you.",
+                "my device has reached its full battery level, allowing me to remove the charging cable.",
+                "Now that my battery is fully charged, it's safe to disconnect the charger.",
+                "Since my battery is at 100%, You can remove the charging cable without any issues."
+            ]
+
+            # Randomly choose a sentence
+            random_sentence2 = random.choice(sentences_full)
+            sensorsBatery += 1
             self.NikkiSay(
-                f'{s}%.Boss, My battery is full. Can you remove my charging')
-            # self.eng.setProperty('volume', 0)
+                f'{s}%.Boss,{random_sentence2}')
 
     def NikkiCreatingNewProject(self):
         file_name = self.NikkiQuickQuestion('project name')
@@ -639,7 +671,6 @@ class Nikki_functions_class():
 
     def NikkiFolderExistOpen(self, names, word, path):
         dir_list = os.listdir(path)
-        # print(dir_list)
         if "names" in word:
             self.NikkiSay('In this folder files names are')
             for name in names:
@@ -648,86 +679,76 @@ class Nikki_functions_class():
 
     def NikkiOpenVscode(self):
         word = self.NikkiQuickQuestion('exist file name')
-        path = '/home/prem/Desktop/prjects/'
+        path = ''
         dir_list = self.NikkiFolderExistOpen(dir_list, word, path)
+
         for project in dir_list:
             if word in project:
-                self.NikkiSay(
-                    f'just a second Boss. I am opening the Visual Studio Code editer file name {word}')
-                word = self.NikkiQuickQuestion(
-                    'yes or no, Do you want to open Visual studio')
-                os.system(f'code  /home/prem/Desktop/prjects/{file_name}') if 'yes' in word or 's' in word else self.NikkiSay(
-                    f'Thank you, i am not doing anything.')
+                self.NikkiSay(f'just a second Boss. I am opening the Visual Studio Code editer file name {word}')
+                word = self.NikkiQuickQuestion('yes or no, Do you want to open Visual studio')
+                os.system(f'code  /{file_name}') if 'yes' in word or 's' in word else self.NikkiSay(f'Thank you, i am not doing anything.')
                 return None
-        path = '/home/prem/Desktop/office_file'
+                 
+        path = '/office_file' 
         dir_list = self.NikkiFolderExistOpen(dir_list, word, path)
-        # print(dir_list)
+
         for project in dir_list:
             if word in project:
-                self.NikkiSay(
-                    f'just a second Boss. I am opening the Visual Studio Code editer file name {word}')
-                word = self.NikkiQuickQuestion(
-                    'yes or no, Do you want to open Visual studio')
-                os.system(f'code  /home/prem/Desktop/prjects/{file_name}') if 'yes' in word or 's' in word else self.NikkiSay(
-                    f'Thank you, i am not doing anything.')
+                self.NikkiSay(f'just a second Boss. I am opening the Visual Studio Code editer file name {word}')
+                word = self.NikkiQuickQuestion('yes or no, Do you want to open Visual studio')
+                os.system(f'code  /{file_name}') if 'yes' in word or 's' in word else self.NikkiSay(f'Thank you, i am not doing anything.')
                 return None
-        # for project_name in dir_list:
-        #     if word in project_name:
-        if 'Sans' in word:
-            os.system(f'code Desktop/office_file/sansaar/')  # TeleBot-Python
 
-        elif 'bot' in word:
-            self.NikkiSay(
-                'just a second Boss. I am opening the Visual Studio Code editer ')
-            os.system(f'code Desktop/office_file/TeleBot-Python')
-
+        if 'Sans' in word: os.system(f'code office_file/sansaar/')
         elif 'name' in 'word':
             file_name = word[word.find('name')+5:].replace(' ', '_')
             self.NikkiSay(f"I am making the file with the name {file_name}")
-            os.system(f'mkdir  /home/prem/Desktop/prjects/{file_name}')
-            self.NikkiSay(
-                'just a second Boss. I am opening the Visual Studio Code editer ')
-            os.system(f'code  /home/prem/Desktop/prjects/{file_name}')
+            os.system(f'mkdir  /{file_name}')
+            self.NikkiSay('just a second Boss. I am opening the Visual Studio Code editer ')
+            os.system(f'code  /{file_name}')
         else:
-            self.NikkiSay(
-                'Boss, what you mean. Just tell the name of the file, tell names for all exist folders names')
+            self.NikkiSay('Boss, What you mean. Just tell the name of the file, tell names for all exist folders names')
 
     def NikkiGoogleMeetDataCollect(self):
-        self.driver.switch_to.new_window()
+        self.NikkiSetGoogle('Prem')
         self.driver.get("https://meet.google.com/")
         self.driver.implicitly_wait(15)
         elements = self.driver.find_elements(
             By.CSS_SELECTOR, "[class='wKIIs']")
-        d = {}
-        with open(f'{self.main_path}Manage_file/time_for_meeting.json', 'w') as fil:
-            fil.write(json.dumps(d, indent=2))
+        self.meeting_data = {}
         for element in elements:
             arialabel = element.get_attribute(
                 "aria-label").replace('This meeting has started. ', '')
             databegintime = element.get_attribute("data-begin-time")
             dataendtime = element.get_attribute("data-end-time")
             datacallid = element.get_attribute("data-call-id")
-            # dataisnow = element.get_attribute("data-is-now")
 
             # divide by 1000 to convert to seconds
             timestamp = int(databegintime) / 1000
+            
             dt_object = datetime.fromtimestamp(timestamp)
 
             # divide by 1000 to convert to seconds
             timestamp2 = int(dataendtime) / 1000
             dt_object2 = datetime.fromtimestamp(timestamp2)
-            d.update({arialabel: {"starting_time": dt_object.strftime("%H:%M:%S"),
-                                  "ending_time": dt_object2.strftime("%H:%M:%S"), "meeting_link": datacallid, "status": False}})
+            self.meeting_data.update({arialabel: {"starting_time": dt_object.strftime("%H:%M:%S"),
+                                    "ending_time": dt_object2.strftime("%H:%M:%S"), "meeting_link": datacallid, "status": False}})
         try:
-            with open(f'{self.main_path}Manage_file/time_for_meeting.json', 'w') as fil:
-                fil.write(json.dumps(d, indent=2))
-            # hotkey('ctrlleft', 'w')
-            # press('enter')
-            # time.sleep(1)
-            # li = self.driver.window_handles
-            # self.driver.window_handles[len(li)-1]
+            with open(f'{self.main_path}Manage_file/time_for_meeting.json', 'w') as file_:
+                file_.write(json.dumps(self.meeting_data, indent=2))
+
         except Exception as e:
-            print(e)
+            self.NikkiSay('error in Google Meet Data Collecter')
+        finally:
+            try:
+                l = self.driver.window_handles
+                hotkey('ctrl', 'w')
+                time.sleep(1)
+                press('enter')
+                time.sleep(1)
+                self.driver.switch_to.window(l[0])
+            except Exception as e:
+                self.NikkiSay('some error in the closing tab')
 
     def checking_google_login(self):
         self.driver.switch_to.new_window()
@@ -738,6 +759,14 @@ class Nikki_functions_class():
                 return True
         except Exception as e:
             return False
+    def tabNamecheck(self):
+        li = self.driver.window_handles
+        tabName = []
+        for i in range(len(li)):
+            c = self.driver.window_handles[i]
+            self.driver.switch_to.window(c)
+            tabName.append(self.driver.title)
+        return tabName
 
     # def NikkiDatafromApi(self):
     #     data = requests.get('https://doeslist.herokuapp.com/api/data').text

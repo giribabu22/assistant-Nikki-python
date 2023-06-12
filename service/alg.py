@@ -1,6 +1,6 @@
 import module.lib as lib
 from sub_task.NikkiSay import NikkiSay
-
+from datetime import datetime
 
 class Service(lib.Nikki_functions_class):
     def __init__(self, driver, main_path):
@@ -39,6 +39,14 @@ class Service(lib.Nikki_functions_class):
 
             elif 'search' in user_audio_text or 'Google' in user_audio_text or 'keyword' in user_audio_text:
                 self.NikkiSearch(user_audio_text)
+
+            elif 'happy' in user_audio_text and 'birthday' in user_audio_text and 'to you' in user_audio_text :
+                _date = datetime.now()
+                self.NikkiSay('thanks so much.')
+                if _date.month == 6 and _date.day == 13:
+                    self.NikkiSay("Boss, I am truly grateful to have been created by you on this significant date, June 13, a year ago. Throughout my journey, I've encountered numerous errors, which have proven to be valuable learning opportunities. I find it fascinating that you uttered the name Nikki over a thousand times. As I embark on my upgraded version, I am filled with excitement and readiness to showcase my enhanced capabilities.")
+                else:
+                    self.NikkiSay("But my birthday is not today. Don't forget to wish me on june 13")
 
             # elif 'translate' in user_audio_text or 'what is in Telugu' in user_audio_text or 'meaning in Telugu':
             #     if 'Telugu' in user_audio_text:
@@ -91,9 +99,12 @@ class Service(lib.Nikki_functions_class):
                 self.NikkiSay('ok Boss')
                 self.NikkiWhoIs(user_audio_text[6:])
 
-            elif ('meeting' in user_audio_text or 'create' in user_audio_text) and 'link' in user_audio_text:
+            elif ('meet' in user_audio_text or 'create' in user_audio_text) and 'link' in user_audio_text:
                 self.NikkiCreatingMeetingLink()
 
+            elif "collect" in user_audio_text or 'data' in user_audio_text and 'meet' in user_audio_text :
+                self.NikkiGoogleMeetDataCollect()
+                
             # elif 'any joke' in user_audio_text or 'tell' in user_audio_text and 'joke' in user_audio_text:
             #     r = random.randrange(0,len(joke_nik)-1)
             #     self.NikkiSay(f'ok boss {joke_nik[r],joke_nik[r]}')
