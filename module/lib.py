@@ -1,5 +1,7 @@
 import os
 from sub_task.NikkiSay import NikkiSay
+from datetime import datetime
+import time
 
 try:
     from dotenv import load_dotenv
@@ -14,23 +16,16 @@ try:
     from playsound import playsound
     from pyautogui import press, hotkey
     import psutil
-    from datetime import datetime
     import re
+
 except ImportError:
-    # os.system('sudo apt install python3.11-venv')
-    # os.system('python3 -m venv env')
-    # os.system('source env/bin/activate')
-    # os.system('sudo apt-get install python3-tk python3-dev')
-    os.system('pip install bs4')
-    os.system('pip install selenium')
-    os.system('pip install ib2to3')
-    os.system('pip install speechRecognition')
-    os.system('pip install playsound')
-    os.system('pip install psutil')
-    os.system('pip install pyautogui')
-    os.system('pip install python-dotenv')
-    # os.system('sudo apt-get install jackd')
-    # os.system('jackd -d alsa')
+    os.system('sudo apt install pip')
+    os.system('sudo apt install curl')
+    os.system('sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg')
+    os.system('echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list')
+    time.sleep(1)
+    os.system('sudo apt update')
+    os.system('sudo apt install brave-browser=1.52.126')
 
 error = 1
 load_dotenv()
@@ -712,7 +707,7 @@ class Nikki_functions_class():
     def NikkiGoogleMeetDataCollect(self):
         self.NikkiSetGoogle('Prem')
         self.driver.get("https://meet.google.com/")
-        self.driver.implicitly_wait(15)
+        self.driver.implicitly_wait(4)
         elements = self.driver.find_elements(
             By.CSS_SELECTOR, "[class='wKIIs']")
         self.meeting_data = {}

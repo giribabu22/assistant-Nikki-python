@@ -4,26 +4,15 @@ import dbus
 import dbus.mainloop.glib
 from sub_task.NikkiSay import NikkiSay
 
-try:
-    from dotenv import load_dotenv
-    import speech_recognition as sr
-    from selenium import webdriver
-    import random
-    import json
-    from selenium.webdriver.edge.options import Options
-    import shutil
-    from dotenv import load_dotenv
-except ImportError:
-    os.system('sudo apt-get install python3-tk python3-dev')
-    os.system('sudo apt install espeak')
-    os.system('sudo apt-get install libxml2 libxml2-dev libxslt1-dev')
-    os.system('pip install lxml')
-    os.system('sudo apt-get install portaudio19-dev')
-    os.system('pip install selenium')
-    os.system('pip install speechRecognition')
-    os.system('pip install pyaudio')
-    os.system('pip install pyttsx3')
-    os.system('pip install pyautogui')
+
+from dotenv import load_dotenv
+import speech_recognition as sr
+from selenium import webdriver
+import random
+import json
+    
+
+
 
 flag = 'unmute'
 joke_nik = [['I invented a new word!Plagiarism!],[Did you hear about the mathematician who’s afraid of negative numbers?He’ll stop at nothing to avoid them.'], ['Why do we tell actors to “break a leg?”Because every play has a cast. Here are some dark jokes to check out if you have a morbid sense of humor.'], ['Helvetica and Times New Roman walk into a bar.“Get out of here!” shouts the bartender. “We don’t serve your type.”],[Yesterday I saw a guy spill all his Scrabble letters on the road. I asked him, “What’s the word on the street?”Once my dog ate all the Scrabble tiles. For days he kept leaving little messages around the house. Don’t miss these hilarious egg puns that will absolutely crack you up.'], ['Knock! Knock! Who’s there? Control Freak. Con… OK, now you say, “Control Freak who?”'], ['Hear about the new restaurant called Karma? There’s no menu: You get what you deserve.'], ['A woman in labor suddenly shouted, “Shouldn’t! Wouldn’t! Couldn’t! Didn’t! Can’t!”“Don’t worry,” said the doc. “Those are just contractions.”'], [
@@ -35,28 +24,36 @@ error = 1
 netError = 0
 meeringMk = 0
 meetingEng = 0
-chrome_profile_directory =	"/home/prem/.config/BraveSoftware/Brave-Browser/Default"
 
 main_path = os.path.abspath(os.getenv('main_path'))+'/'
 
+
 try:
     NikkiSay('wait boss setting the browser it will take few seconds')
+    chrome_profile_directory =	"/home/prem/.config/BraveSoftware/Brave-Browser/Default"
+    chrome_driver_path = main_path + 'chromedriver-sel/chromedriver'
+    brave_binary_location = '/usr/bin/brave-browser'
 
     chrome_options = webdriver.ChromeOptions()
-    chrome_options.binary_location = '/usr/bin/brave-browser'
+    chrome_options.binary_location = brave_binary_location
     chrome_options.add_argument('--remote-debugging-port=9000')
     chrome_options.add_argument("--user-data-dir=" + chrome_profile_directory)
 
-    driver = webdriver.Chrome(
-    main_path+'chromedriver-sel/chromedriver', chrome_options=chrome_options)
+    webdriver.chrome.driver = chrome_driver_path
+
+    driver = webdriver.Chrome(options=chrome_options)
     call = alg.Service(driver, main_path)  # object create
     tabNames =   call.tabNamecheck()
     if 'nikki' not in tabNames:
         call.driver.get(f'file://{main_path}views/front_nikki.html')
         call.NikkiSetGoogle('l')
 
+
 except Exception as e:
-    print(e)
+    e = str(e)
+    if 'delimiter' in e or 'Extra data' in e:
+        with open(f'{main_path}Manage_file/time_for_meeting.json', 'w') as f:
+            f.write(json.dumps({}, indent=3))
     NikkiSay(f'oopes something wrong in first set up function. boss')
 
 def reCallFun(error):
@@ -113,7 +110,7 @@ while True:
     except Exception as e:
         try:
             e = str(e)
-            if 'delimiter' in e:
+            if 'delimiter' in e or 'Extra data' in e:
                 with open(f'{main_path}Manage_file/time_for_meeting.json', 'w') as f:
                     f.write(json.dumps({}, indent=3))
 
@@ -130,7 +127,7 @@ while True:
 
                 driver = webdriver.Chrome(
                 main_path+'chromedriver-sel/chromedriver', chrome_options=chrome_options)
-                # call = alg.Service(driver, main_path)  # object create
+                call = alg.Service(driver, main_path)  # object create
                 tabNames =   call.tabNamecheck()
                 if 'nikki' not in tabNames:
                     call.driver.get(f'file://{main_path}views/front_nikki.html')

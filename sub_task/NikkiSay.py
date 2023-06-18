@@ -1,21 +1,9 @@
 import os
 
-try:
-    from gtts import gTTS
-    import playsound    
-    import pyttsx3
+from gtts import gTTS
+import playsound    
+import pyttsx3
 
-except ImportError:
-    os.system('sudo apt-get install python3-tk python3-dev')
-    os.system('sudo apt install espeak')
-    os.system('sudo apt-get install libxml2 libxml2-dev libxslt1-dev')
-    os.system('pip install lxml')
-    os.system('sudo apt-get install portaudio19-dev')
-    os.system('pip install selenium')
-    os.system('pip install playsound')
-    os.system('pip install gtts')
-    os.system('pip install pyaudio')
-    os.system('pip install pyttsx3')
 
 def NikkiSay(text):
     try:
