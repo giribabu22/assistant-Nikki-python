@@ -1,7 +1,7 @@
 import service.alg as alg
 import os
-import dbus
-import dbus.mainloop.glib
+# import dbus
+# import dbus.mainloop.glib
 from sub_task.NikkiSay import NikkiSay
 
 
@@ -11,8 +11,6 @@ from selenium import webdriver
 import random
 import json
     
-
-
 
 flag = 'unmute'
 joke_nik = [['I invented a new word!Plagiarism!],[Did you hear about the mathematician who’s afraid of negative numbers?He’ll stop at nothing to avoid them.'], ['Why do we tell actors to “break a leg?”Because every play has a cast. Here are some dark jokes to check out if you have a morbid sense of humor.'], ['Helvetica and Times New Roman walk into a bar.“Get out of here!” shouts the bartender. “We don’t serve your type.”],[Yesterday I saw a guy spill all his Scrabble letters on the road. I asked him, “What’s the word on the street?”Once my dog ate all the Scrabble tiles. For days he kept leaving little messages around the house. Don’t miss these hilarious egg puns that will absolutely crack you up.'], ['Knock! Knock! Who’s there? Control Freak. Con… OK, now you say, “Control Freak who?”'], ['Hear about the new restaurant called Karma? There’s no menu: You get what you deserve.'], ['A woman in labor suddenly shouted, “Shouldn’t! Wouldn’t! Couldn’t! Didn’t! Can’t!”“Don’t worry,” said the doc. “Those are just contractions.”'], [
@@ -24,9 +22,7 @@ error = 1
 netError = 0
 meeringMk = 0
 meetingEng = 0
-
 main_path = os.path.abspath(os.getenv('main_path'))+'/'
-
 
 try:
     NikkiSay('wait boss setting the browser it will take few seconds')
@@ -101,7 +97,7 @@ while True:
         error = reCallFun(error)
 
     except sr.RequestError:
-        call.NikkiSay('Boss, Network error check you wifi ')
+        call.NikkiSay('Boss, Network error check you wifi.')
         netError += 1
         if netError > 6:
             s = 0
